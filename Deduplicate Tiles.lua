@@ -4,6 +4,20 @@ if app.activeSprite then
   local sizeX, sizeY = sprite.gridBounds.width, sprite.gridBounds.height
   local tilesX, tilesY = sprite.width / sizeX, sprite.height / sizeY
 
+  function getEmptyColor()
+    if sprite.colorMode == ColorMode.RGB then
+      return app.pixelColor.rgba(0, 0, 0, 0)
+    elseif sprite.colorMode == ColorMode.GRAY then
+      return app.pixelColor.greya(0, 0)
+    elseif sprite.colorMode == ColorMode.INDEXED then
+      return sprite.transparentColor
+    else
+      return 0
+    end
+  end
+
+  local emptyColor = getEmptyColor()
+
   function tileEquals(x1, y1, x2, y2)
     for y = 0, sizeY - 1 do
       for x = 0, sizeX - 1 do
@@ -16,24 +30,10 @@ if app.activeSprite then
     return true
   end
 
-  function getEmptyColor()
-    if sprite.colorMode == ColorMode.RGB then
-      return app.pixelColor.rgba(0, 0, 0, 0)
-    elseif sprite.colorMode == ColorMode.GRAY then
-      return app.pixelColor.greya(0, 0)
-    elseif sprite.ColorMode == ColorMode.INDEXED then
-      return sprite.transparentColor
-    else
-      return 0
-    end
-  end
-
-  function isTileEmpty(tileX, tileY)
-    local empty = getEmptyColor()
-
-    for y = 0, sizeY - 1 do
-      for x = 0, sizeX - 1 do
-        if image:getPixel(tileX * sizeX + x, tileY * sizeY + y) ~= empty then
+  function isTileEmpty(startX, startY)
+    for y = startY * sizeY, startY * sizeY + sizeY - 1 do
+      for x = startX * sizeX, startX * sizeX + sizeX - 1 do
+        if image:getPixel(x, y) ~= emptyColor then
           return false
         end
       end
@@ -50,11 +50,9 @@ if app.activeSprite then
   end
 
   function clearTile(startX, startY)
-    local empty = getEmptyColor()
-
     for y = startY * sizeY, startY * sizeY + sizeY - 1 do
       for x = startX * sizeX, startX * sizeX + sizeX - 1 do
-        image:drawPixel(x, y, empty)
+        image:drawPixel(x, y, emptyColor)
       end
     end
   end
