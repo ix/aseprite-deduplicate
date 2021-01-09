@@ -1,10 +1,30 @@
 if app.activeSprite then
+
+  local dialog = Dialog("Deduplicate Tiles")
+
+  dialog:number { id = "sizeX", label = "Tile width", text = "8", decimals = 0 }
+        :number { id = "sizeY", label = "Tile height", text = "8", decimals = 0 }
+        :check { id = "useGrid", label = "Use grid settings", selected = true }
+
+  dialog:show()
+
+  local data = dialog.data
+  
   local sprite = app.activeSprite
   local image = app.activeImage
-  local sizeX, sizeY = sprite.gridBounds.width, sprite.gridBounds.height
+
+  function computeSizes()
+    if data.useGrid then
+      return sprite.gridBounds.width, sprite.gridBounds.height
+    else
+      return data.sizeX, data.sizeY
+    end
+  end
+
+  local sizeX, sizeY = computeSizes() 
   local tilesX, tilesY = sprite.width / sizeX, sprite.height / sizeY
 
-  function getEmptyColor()
+  function computeEmptyColor()
     if sprite.colorMode == ColorMode.RGB then
       return app.pixelColor.rgba(0, 0, 0, 0)
     elseif sprite.colorMode == ColorMode.GRAY then
@@ -16,7 +36,7 @@ if app.activeSprite then
     end
   end
 
-  local emptyColor = getEmptyColor()
+  local emptyColor = computeEmptyColor()
 
   function tileEquals(x1, y1, x2, y2)
     for y = 0, sizeY - 1 do
