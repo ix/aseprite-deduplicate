@@ -49,8 +49,12 @@ if app.activeSprite then
        and tileEquals(x1, y1, x2, y2)
   end
 
-  function clear(iterator)
-    for pixel in iterator do pixel(getEmptyColor()) end
+  function clear(rect)
+    for pixel in image:pixels(rect) do pixel(getEmptyColor()) end
+  end
+
+  function rectOf(x, y)
+    return Rectangle(x * sizeX, y * sizeY, sizeX, sizeY)
   end
   
   app.transaction(function()
@@ -59,7 +63,7 @@ if app.activeSprite then
         for otherY = 0, tilesY - 1 do
           for otherX = 0, tilesX - 1 do
             if isDuplicate(tileX, tileY, otherX, otherY) then
-              clear(image:pixels(Rectangle(otherX * sizeX, otherY * sizeY, sizeX, sizeY)))
+              clear(rectOf(otherX, otherY))
             end
           end
         end
