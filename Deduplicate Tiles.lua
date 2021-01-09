@@ -57,10 +57,6 @@ if app.activeSprite then
     end
   end
 
-  function rectOf(x, y)
-    return Rectangle(x * sizeX, y * sizeY, sizeX, sizeY)
-  end
-  
   app.transaction(function()
     for tileY = 0, tilesY - 1 do
       for tileX = 0, tilesX - 1 do
